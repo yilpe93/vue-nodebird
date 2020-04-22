@@ -38,7 +38,12 @@
             label="약관에 동의합니다."
             required
           />
-          <v-btn color="green" type="submit" :disabled="!valid">
+          <v-btn
+            color="green"
+            type="submit"
+            :disabled="!valid"
+            :style="{ color: !valid ? 'inherit' : '#fff' }"
+          >
             가입하기
           </v-btn>
         </v-form>
@@ -67,19 +72,26 @@ export default {
         (v) => v === this.password || "비밀번호가 일치하지 않습니다.",
       ],
       nicknameRules: [(v) => !!v || "닉네임은 필수입니다."],
-      termsRules: "",
+      // termsRules: "",
     };
   },
   methods: {
     onSubmitForm() {
-      if (!this.$refs.form.validate()) {
-        alert("폼 유형이 유효하지 않습니다.");
-      } else {
-        alert("회원가입 시도");
+      const { nickname, email } = this;
+
+      if (this.$refs.form.validate()) {
+        this.$store
+          .dispatch("users/signUp", { nickname, email })
+          .then((_) => {
+            this.$router.push({ path: "/" });
+          })
+          .catch((_) => {
+            alert("회원가입 실패");
+          });
       }
     },
   },
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped></style>

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container v-if="!me">
     <v-card>
       <v-form ref="form" v-model="valid" @submit.prevent="onSubmitForm">
         <v-container>
@@ -26,6 +26,14 @@
       </v-form>
     </v-card>
   </v-container>
+  <v-container v-else>
+    <v-card>
+      <v-container>
+        {{ me.nickname }}님 로그인되었습니다.
+        <v-btn @click="onLogOut">로그아웃</v-btn>
+      </v-container>
+    </v-card>
+  </v-container>
 </template>
 
 <script>
@@ -42,13 +50,24 @@ export default {
       passwordRules: [(v) => !!v || "패스워드는 필수입니다."],
     };
   },
+  computed: {
+    me() {
+      return this.$store.state.users.me;
+    },
+  },
   methods: {
     onSubmitForm() {
-      if (!this.$refs.form.validate()) {
-        alert("폼 유형이 유효하지 않습니다.");
-      } else {
-        alert("회원가입 시도");
+      const { email, nickname } = this;
+
+      if (this.$refs.form.validate()) {
+        this.$store.dispatch("users/logIn", {
+          email,
+          nickname: "킴재쿤",
+        });
       }
+    },
+    onLogOut() {
+      this.$store.dispatch("users/logOut");
     },
   },
 };

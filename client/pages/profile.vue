@@ -5,22 +5,37 @@
         <v-subheader>내 프로필</v-subheader>
       </v-container>
       <v-container>
-        <v-form>
-          <v-text-field label="닉네임" reuqired />
+        <v-form v-model="valid" @submit.prevent="onChangeNickname">
+          <v-text-field
+            v-model="nickname"
+            label="닉네임"
+            :rules="nicknameRules"
+            reuqired
+          />
           <v-btn color="blue" type="submit">수정</v-btn>
         </v-form>
       </v-container>
     </v-card>
+
     <v-card style="margin-bottom: 20px;">
       <v-container>
         <v-subheader>팔로잉</v-subheader>
-        <follow-list />
+        <follow-list
+          :statusName="'Following'"
+          :lists="followingList"
+          :removeEvent="removeFollowing"
+        />
       </v-container>
     </v-card>
+
     <v-card style="margin-bottom: 20px;">
       <v-container>
         <v-subheader>팔로워</v-subheader>
-        <follow-list />
+        <follow-list
+          :statusName="'Follower'"
+          :lists="followerList"
+          :removeEvent="removeFollower"
+        />
       </v-container>
     </v-card>
   </v-container>
@@ -28,9 +43,44 @@
 
 <script>
 const FollowList = () => import("~/components/FollowList");
+
 export default {
   components: {
     FollowList,
+  },
+  head() {
+    return {
+      title: "프로필",
+    };
+  },
+  computed: {
+    followingList() {
+      return this.$store.state.users.followingList;
+    },
+    followerList() {
+      return this.$store.state.users.followerList;
+    },
+  },
+  data() {
+    return {
+      modefied: false,
+      valid: false,
+      nickname: "",
+      nicknameRules: [(v) => !!v || "닉네임을 입력하세요."],
+    };
+  },
+  methods: {
+    onChangeNickname() {
+      this.$store.dispatch("users/changeNickname", {
+        nickname: this.nickname,
+      });
+    },
+    removeFollowing(index) {
+      this.$store.dispatch("users/removeFollowing", index);
+    },
+    removeFollower(index) {
+      this.$store.dispatch("users/removeFollower", index);
+    },
   },
 };
 </script>
