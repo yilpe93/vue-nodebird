@@ -16,7 +16,7 @@
           <v-btn text nuxt to="/profile">
             <span>프로필</span>
           </v-btn>
-          <v-btn text nuxt to="/signup">
+          <v-btn v-if="!me" text nuxt to="/signup">
             <span>회원가입</span>
           </v-btn>
         </v-toolbar-items>
@@ -41,6 +41,11 @@ const LoginForm = () => import("~/components/LoginForm");
 export default {
   components: {
     LoginForm,
+  },
+  computed: {
+    me() {
+      return this.$store.state.users.me;
+    },
   },
 };
 </script>

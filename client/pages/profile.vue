@@ -45,6 +45,7 @@ export default {
       title: "프로필",
     };
   },
+  middleware: "anonymous",
   computed: {
     followingList() {
       return this.$store.state.users.followingList;

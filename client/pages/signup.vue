@@ -54,6 +54,21 @@
 
 <script>
 export default {
+  middleware: "authenticated",
+  watch: {
+    me(val) {
+      if (val) {
+        this.$router.push({
+          path: "/",
+        });
+      }
+    },
+  },
+  computed: {
+    me() {
+      return this.$store.state.users.me;
+    },
+  },
   data() {
     return {
       valid: false,
