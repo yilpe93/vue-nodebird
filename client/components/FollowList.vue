@@ -2,9 +2,9 @@
   <div>
     <v-list v-if="!isEmpty">
       <ul>
-        <li v-for="(list, index) in lists" :key="index">
-          <span>{{ list }}</span>
-          <v-icon @click="removeEvent(index)">mdi-minus-circle-outline</v-icon>
+        <li v-for="user in users" :key="user.id">
+          <span>{{ user.nickname }}</span>
+          <v-icon @click="remove(user.id)">mdi-minus-circle-outline</v-icon>
         </li>
       </ul>
     </v-list>
@@ -15,15 +15,18 @@
 <script>
 export default {
   props: {
-    statusName: String,
-    lists: {
+    users: {
       type: Array,
+      required: true,
     },
-    removeEvent: Function,
+    remove: {
+      type: Function,
+      required: true,
+    },
   },
   computed: {
     isEmpty() {
-      return !(this.lists && this.lists.length);
+      return !(this.users && this.users.length > 0);
     },
   },
   data() {

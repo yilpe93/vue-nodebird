@@ -20,22 +20,14 @@
     <v-card style="margin-bottom: 20px;">
       <v-container>
         <v-subheader>팔로잉</v-subheader>
-        <follow-list
-          :statusName="'Following'"
-          :lists="followingList"
-          :removeEvent="removeFollowing"
-        />
+        <follow-list :users="followingList" :remove="removeFollowing" />
       </v-container>
     </v-card>
 
     <v-card style="margin-bottom: 20px;">
       <v-container>
         <v-subheader>팔로워</v-subheader>
-        <follow-list
-          :statusName="'Follower'"
-          :lists="followerList"
-          :removeEvent="removeFollower"
-        />
+        <follow-list :users="followerList" :remove="removeFollower" />
       </v-container>
     </v-card>
   </v-container>
@@ -75,11 +67,11 @@ export default {
         nickname: this.nickname,
       });
     },
-    removeFollowing(index) {
-      this.$store.dispatch("users/removeFollowing", index);
+    removeFollowing(id) {
+      this.$store.dispatch("users/removeFollowing", id);
     },
-    removeFollower(index) {
-      this.$store.dispatch("users/removeFollower", index);
+    removeFollower(id) {
+      this.$store.dispatch("users/removeFollower", id);
     },
   },
 };
