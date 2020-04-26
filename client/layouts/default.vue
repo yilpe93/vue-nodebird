@@ -7,13 +7,18 @@
         </v-toolbar-title>
         <v-spacer />
         <v-toolbar-items>
-          <v-text-field
-            label="검색"
-            hide-details
-            prepend-icon="mdi-magnify"
-            class="search-field"
-          />
-          <v-btn text nuxt to="/profile">
+          <v-form @submit.prevent="onSearchHashtag">
+            <div :style="{display: 'flex', alignItems: 'center', height: '100%'}">
+              <v-text-field
+                v-model="hashtag"
+                label="검색"
+                hide-details
+                prepend-icon="mdi-magnify"
+                class="search-field"
+              />
+            </div>
+          </v-form>
+          <v-btn v-if="me" text nuxt to="/profile">
             <span>프로필</span>
           </v-btn>
           <v-btn v-if="!me" text nuxt to="/signup">
@@ -47,6 +52,19 @@ export default {
       return this.$store.state.users.me;
     },
   },
+  data() {
+    return {
+      hashtag: ''
+    }
+  },
+  methods: {
+    onSearchHashtag() {
+      this.$router.push({
+        path: `/hashtag/${this.hashtag}`
+      });
+      this.hashtag = '';
+    }
+  }
 };
 </script>
 

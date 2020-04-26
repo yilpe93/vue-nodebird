@@ -1,16 +1,14 @@
 export const state = () => ({
   me: null, // 로그인 상태,
-  followingList: [
-    { id: 1, nickname: "킴재쿤" },
-    { id: 2, nickname: "네로" },
-    { id: 3, nickname: "히로" },
-  ],
-  followerList: [
-    { id: 1, nickname: "킴재쿤" },
-    { id: 2, nickname: "네로" },
-    { id: 3, nickname: "히로" },
-  ],
+  followingList: [],
+  followerList: [],
+  hasMoreFollowing: true,
+  hasMoreFollower: true
 });
+
+const totalFollowings = 6;
+const totalFollowers = 8;
+const limit = 3;
 
 // 동기적 작업
 export const mutations = {
@@ -34,6 +32,24 @@ export const mutations = {
     const index = state.followerList.findIndex((list) => list.id === id);
     state.followerList.splice(index, 1);
   },
+  LOAD_MORE_FOLLOWINGS(state) {
+    const diff = totalFollowings - state.followingList.length;
+    const fakeUsers = Array(diff > limit ? limit : diff).fill().map(v => (
+      { id: Math.random().toString(), nickname: Math.floor(Math.random() * 1000) }
+    ));
+
+    state.followingList = state.followingList.concat(fakeUsers);
+    state.hasMoreFollowing = fakeUsers.length === limit;
+  },
+  LOAD_MORE_FOLLOWERS(state) {
+    const diff = totalFollowers - state.followerList.length;
+    const fakeUsers = Array(diff > limit ? limit : diff).fill().map(v => (
+      { id: Math.random().toString(), nickname: Math.floor(Math.random() * 1000) }
+    ));
+
+    state.followerList = state.followerList.concat(fakeUsers);
+    state.hasMoreFollower = fakeUsers.length === limit;
+  }
 };
 
 // 비동기적 작업
@@ -65,4 +81,14 @@ export const actions = {
   removeFollower({ commit }, payload) {
     commit("REMOVE_FOLLOWER", payload);
   },
+  loadFollowing({ commit, state }, payload) {
+    if (state.hasMoreFollowing) {
+      commit("LOAD_MORE_FOLLOWINGS");
+    }
+  },
+  loadFollower({ commit, state }, payload) {
+    if (state.hasMoreFollower) {
+      commit("LOAD_MORE_FOLLOWERS");
+    }
+  }
 };

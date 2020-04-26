@@ -12,7 +12,7 @@
             :rules="nicknameRules"
             reuqired
           />
-          <v-btn color="blue" type="submit">수정</v-btn>
+          <v-btn dark color="blue" type="submit">수정</v-btn>
         </v-form>
       </v-container>
     </v-card>
@@ -21,6 +21,13 @@
       <v-container>
         <v-subheader>팔로잉</v-subheader>
         <follow-list :users="followingList" :remove="removeFollowing" />
+        <v-btn 
+          v-if="hasMoreFollowing" 
+          dark 
+          color="blue" 
+          style="width: 100%"
+          @click="loadMoreFollowing"
+        >더보기</v-btn>
       </v-container>
     </v-card>
 
@@ -28,6 +35,13 @@
       <v-container>
         <v-subheader>팔로워</v-subheader>
         <follow-list :users="followerList" :remove="removeFollower" />
+        <v-btn 
+          v-if="hasMoreFollower" 
+          dark 
+          color="blue" 
+          style="width: 100%"
+          @click="loadMoreFollower"
+        >더보기</v-btn>
       </v-container>
     </v-card>
   </v-container>
@@ -46,14 +60,6 @@ export default {
     };
   },
   middleware: "anonymous",
-  computed: {
-    followingList() {
-      return this.$store.state.users.followingList;
-    },
-    followerList() {
-      return this.$store.state.users.followerList;
-    },
-  },
   data() {
     return {
       modefied: false,
@@ -61,6 +67,24 @@ export default {
       nickname: "",
       nicknameRules: [(v) => !!v || "닉네임을 입력하세요."],
     };
+  },
+  computed: {
+    followingList() {
+      return this.$store.state.users.followingList;
+    },
+    followerList() {
+      return this.$store.state.users.followerList;
+    },
+    hasMoreFollowing() {
+      return this.$store.state.users.followingList;
+    },
+    hasMoreFollower() {
+      return this.$store.state.users.followerList;
+    }
+  },
+  fetch({ store }) {
+    store.dispatch("users/loadFollowing");
+    store.dispatch("users/loadFollower");
   },
   methods: {
     onChangeNickname() {
@@ -74,6 +98,12 @@ export default {
     removeFollower(id) {
       this.$store.dispatch("users/removeFollower", id);
     },
+    loadMoreFollowing() {
+      this.$store.dispatch("users/loadFollowing");
+    },
+    loadMoreFollower() {
+      this.$store.dispatch("users/loadFollower");
+    }
   },
 };
 </script>
