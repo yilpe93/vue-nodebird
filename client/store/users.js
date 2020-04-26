@@ -62,17 +62,36 @@ export const mutations = {
 export const actions = {
   // const { commit, dispatch, state, rootState, getters } = context
   signUp({ commit }, payload) {
-    this.$axios.post("http://localhost:3085/user/resigter", {
-      email: payload.email,
-      nickname: payload.nickname,
-      password: payload.password,
-    });
-
-    commit("SET_ME", payload);
+    const { email, nickname, password } = payload;
+    this.$axios
+      .post("http://localhost:3085/user/resigter", {
+        email,
+        nickname,
+        password,
+      })
+      .then((res) => {
+        commit("SET_ME", res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   },
-  logIn({ commit, getters }, payload) {
-    commit("SET_ME", payload);
-    getters.getMe;
+  logIn({ commit }, payload) {
+    const { email, password } = payload;
+
+    // withCredentials: true => Local에서 쿠키가 저장되도록
+    this.$axios
+      .post(
+        "http://localhost:3085/user/login",
+        { email, password },
+        { withCredentials: true }
+      )
+      .then((res) => {
+        commit("SET_ME", res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   },
   logOut({ commit }) {
     commit("SET_ME", null);

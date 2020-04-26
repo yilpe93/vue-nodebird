@@ -57,12 +57,12 @@ export default {
   },
   methods: {
     onSubmitForm() {
-      const { email, nickname } = this;
+      const { email, password } = this;
 
       if (this.$refs.form.validate()) {
         this.$store.dispatch("users/logIn", {
           email,
-          nickname: "킴재쿤",
+          password,
         });
       }
     },
