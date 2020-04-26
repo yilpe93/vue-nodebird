@@ -60,14 +60,14 @@ export const mutations = {
 
 // 비동기적 작업
 export const actions = {
-  // { commit, dispatch, state, rootState, getters } = context
+  // const { commit, dispatch, state, rootState, getters } = context
   signUp({ commit }, payload) {
-    // 서버에 회원가입 요청을 보내는 부분
-    this.$axios.post("/user", {
+    this.$axios.post("http://localhost:3085/user/resigter", {
       email: payload.email,
       nickname: payload.nickname,
       password: payload.password,
     });
+
     commit("SET_ME", payload);
   },
   logIn({ commit, getters }, payload) {

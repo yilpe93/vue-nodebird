@@ -4,13 +4,7 @@
       <v-container>
         <v-subheader>회원가입</v-subheader>
         <v-form ref="form" v-model="valid" @submit.prevent="onSubmitForm">
-          <v-text-field
-            v-model="email"
-            :rules="emailRules"
-            label="이메일"
-            type="email"
-            required
-          />
+          <v-text-field v-model="email" :rules="emailRules" label="이메일" type="email" required />
           <v-text-field
             v-model="password"
             :rules="passwordRules"
@@ -43,9 +37,7 @@
             type="submit"
             :disabled="!valid"
             :style="{ color: !valid ? 'inherit' : '#fff' }"
-          >
-            가입하기
-          </v-btn>
+          >가입하기</v-btn>
         </v-form>
       </v-container>
     </v-card>
@@ -92,11 +84,11 @@ export default {
   },
   methods: {
     onSubmitForm() {
-      const { nickname, email } = this;
+      const { nickname, email, password } = this;
 
       if (this.$refs.form.validate()) {
         this.$store
-          .dispatch("users/signUp", { nickname, email })
+          .dispatch("users/signUp", { nickname, email, password })
           .then((_) => {
             this.$router.push({ path: "/" });
           })
