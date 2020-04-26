@@ -3,7 +3,7 @@ export const state = () => ({
   followingList: [],
   followerList: [],
   hasMoreFollowing: true,
-  hasMoreFollower: true
+  hasMoreFollower: true,
 });
 
 const totalFollowings = 6;
@@ -34,22 +34,28 @@ export const mutations = {
   },
   LOAD_MORE_FOLLOWINGS(state) {
     const diff = totalFollowings - state.followingList.length;
-    const fakeUsers = Array(diff > limit ? limit : diff).fill().map(v => (
-      { id: Math.random().toString(), nickname: Math.floor(Math.random() * 1000) }
-    ));
+    const fakeUsers = Array(diff > limit ? limit : diff)
+      .fill()
+      .map((v) => ({
+        id: Math.random().toString(),
+        nickname: Math.floor(Math.random() * 1000),
+      }));
 
     state.followingList = state.followingList.concat(fakeUsers);
     state.hasMoreFollowing = fakeUsers.length === limit;
   },
   LOAD_MORE_FOLLOWERS(state) {
     const diff = totalFollowers - state.followerList.length;
-    const fakeUsers = Array(diff > limit ? limit : diff).fill().map(v => (
-      { id: Math.random().toString(), nickname: Math.floor(Math.random() * 1000) }
-    ));
+    const fakeUsers = Array(diff > limit ? limit : diff)
+      .fill()
+      .map((v) => ({
+        id: Math.random().toString(),
+        nickname: Math.floor(Math.random() * 1000),
+      }));
 
     state.followerList = state.followerList.concat(fakeUsers);
     state.hasMoreFollower = fakeUsers.length === limit;
-  }
+  },
 };
 
 // 비동기적 작업
@@ -57,6 +63,11 @@ export const actions = {
   // { commit, dispatch, state, rootState, getters } = context
   signUp({ commit }, payload) {
     // 서버에 회원가입 요청을 보내는 부분
+    this.$axios.post("/user", {
+      email: payload.email,
+      nickname: payload.nickname,
+      password: payload.password,
+    });
     commit("SET_ME", payload);
   },
   logIn({ commit, getters }, payload) {
@@ -90,5 +101,5 @@ export const actions = {
     if (state.hasMoreFollower) {
       commit("LOAD_MORE_FOLLOWERS");
     }
-  }
+  },
 };
