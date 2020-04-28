@@ -7,12 +7,14 @@ module.exports = () => {
   passport.serializeUser((user, done) => {
     return done(null, user.id);
   });
-  // 로그인 이후 모든 요청에 응답
+  // 로그인 이후 모든 요청에 응답, 이에 요청에서 passport.authenticate()와 같이 login되었는지 확인할 수 있다.
   passport.deserializeUser(async (id, done) => {
     try {
       // 이후 캐싱처리..
-      const user = await db.User.findOne({ where: { id } });
-      return done(null, user); // req.user, req.isAuthenticaetd() === true
+      const user = await db.User.findOne({
+        where: { id },
+      });
+      return done(null, user); // req.user, passport.authenticate() === true
     } catch (err) {
       console.error(err);
       return done(err);

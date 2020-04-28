@@ -79,7 +79,7 @@ export const actions = {
   logIn({ commit }, payload) {
     const { email, password } = payload;
 
-    // withCredentials: true => Local에서 쿠키가 저장되도록
+    // withCredentials: true => cols로 인한 Local에서 쿠키가 처리될 수 있도록
     this.$axios
       .post(
         "http://localhost:3085/user/login",
@@ -94,7 +94,14 @@ export const actions = {
       });
   },
   logOut({ commit }) {
-    commit("SET_ME", null);
+    this.$axios
+      .post("http://localhost:3085/user/logout", {}, { withCredentials: true })
+      .then((res) => {
+        commit("SET_ME", null);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   },
   changeNickname({ commit }, payload) {
     commit("CHANGE_NICKNAME", payload);
