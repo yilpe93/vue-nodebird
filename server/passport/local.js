@@ -12,7 +12,6 @@ module.exports = () => {
       },
       async (email, password, done) => {
         try {
-          console.log("email", email, "password", password);
           // email 비교
           const exUser = await db.User.findOne({
             where: { email },
@@ -23,7 +22,7 @@ module.exports = () => {
           }
 
           // password 비교
-          const result = await bcrypt.compare(password, exUser.password); // password 복호화
+          const result = await bcrypt.compare(password, exUser.password);
           if (result) {
             return done(null, exUser);
           } else {

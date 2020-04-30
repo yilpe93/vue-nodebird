@@ -1,14 +1,15 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
-const db = require("../models");
+// Middleware
+const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
+const db = require("../models");
 const router = express.Router();
 
-router.post("/resigter", async (req, res, next) => {
+router.post("/resigter", isNotLoggedIn, async (req, res, next) => {
   try {
     const { email, password, nickname } = req.body;
-
     const exUser = await db.User.findOne({ where: { email } });
 
     // 이미 회원가입된 email 경우
@@ -50,12 +51,12 @@ router.post("/resigter", async (req, res, next) => {
       });
     })(req, res, next);
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return next(err);
   }
 });
 
-router.post("/login", (req, res, next) => {
+router.post("/login", isNotLoggedIn, (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
       console.error("err", err);
@@ -73,17 +74,17 @@ router.post("/login", (req, res, next) => {
         console.error("err", err);
         return next(err);
       }
+
+      console.log("login", req.isAuthenticated());
       return res.json(user);
     });
   })(req, res, next);
 });
 
-router.post("/logout", (req, res) => {
-  if (passport.authenticate()) {
-    req.logout();
-    req.session.destroy(); // 선택사항
-    return res.status(200).send("로그아웃 되었습니다.");
-  }
+router.post("/logout", isLoggedIn, (req, res) => {
+  req.logout();
+  req.session.destroy(); // 선택사항
+  return res.status(200).send("로그아웃 되었습니다.");
 });
 
 module.exports = router;

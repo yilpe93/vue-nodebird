@@ -7,8 +7,11 @@ const cookie = require("cookie-parser");
 const morgan = require("morgan");
 
 const db = require("./models");
+// Passport Config
 const passportConfig = require("./passport");
+// Routes
 const userRouter = require("./routes/user");
+const postRouter = require("./routes/post");
 
 const app = express();
 
@@ -30,6 +33,8 @@ app.use(
     credentials: true,
   })
 );
+// 정적파일 제공해주기 위해 (프론트 접근 url, 백 제공 폴더) => 서버 주소와 프론트 주소는 웬만하면 다르게, 백의 주소 노출 위험
+app.use("/", express.static("uploads"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookie("cookiesecret"));
@@ -48,11 +53,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/user", userRouter);
-
-app.post("/post", (req, res) => {
-  if (passport.authenticate()) {
-  }
-});
+app.use("/post", postRouter);
 
 app.listen(3085, () => {
   console.log(`백엔드 서버 ${3085}번 포트에서 작동중..`);

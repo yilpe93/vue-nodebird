@@ -19,7 +19,28 @@
           <v-btn type="submit" color="green" absolute right style="color: #fff;"
             >짹짹</v-btn
           >
-          <v-btn>이미지 업로드</v-btn>
+          <input
+            ref="imageInput"
+            type="file"
+            multiple
+            hidden
+            @change="onChangeImages"
+          />
+          <v-btn type="button" @click="onClickImageUpload">이미지 업로드</v-btn>
+          <div>
+            <p
+              v-for="(p, i) in imagePaths"
+              :key="p"
+              style="display: inline-block;"
+            >
+              <img
+                :src="`http://localhost:3085/${p}`"
+                :alt="p"
+                style="width: 200px;"
+              />
+              <button type="button" @click="onRemoveImage(i)">제거</button>
+            </p>
+          </div>
         </div>
       </v-form>
     </v-container>
@@ -42,6 +63,7 @@ export default {
   },
   computed: {
     ...mapState("users", ["me"]),
+    ...mapState("posts", ["imagePaths"]),
   },
   methods: {
     onChangeTextarea(value) {
@@ -58,13 +80,6 @@ export default {
         this.$store
           .dispatch("posts/addPost", {
             content,
-            User: {
-              nickname: this.me.nickname,
-            },
-            Comments: [],
-            Images: [],
-            id: Date.now(),
-            createAt: Date.now(),
           })
           .then((_) => {
             this.content = "";
@@ -76,6 +91,20 @@ export default {
             console.log("err", err);
           });
       }
+    },
+    onClickImageUpload() {
+      this.$refs.imageInput.click();
+    },
+    onChangeImages(e) {
+      const imageFormData = new FormData();
+      [].forEach.call(e.target.files, (f) => {
+        imageFormData.append("image", f);
+      });
+
+      this.$store.dispatch("posts/uploadImages", imageFormData);
+    },
+    onRemoveImage(index) {
+      this.$store.commit("posts/REMOVE_IMAGE_PATHS", index);
     },
   },
 };

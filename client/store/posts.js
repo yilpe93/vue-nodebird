@@ -1,6 +1,7 @@
 export const state = () => ({
   mainPosts: [],
   hasMorePost: true,
+  imagePaths: [],
 });
 
 // 실무적으로는 lastId 기반을 통해서 불러온다.
@@ -26,7 +27,7 @@ const limit = 10;
 export const mutations = {
   ADD_MAIN_POST(state, payload) {
     state.mainPosts.unshift(payload);
-    console.log("add", state.mainPosts);
+    state.imagePaths = [];
   },
   REMOVE_MAIN_POST(state, payload) {
     const index = state.mainPosts.findIndex((v) => v.id === payload.id);
@@ -38,25 +39,54 @@ export const mutations = {
   },
   LOAD_POSTS(state) {
     const diff = totalPosts - state.mainPosts.length; // 아직 안 불러온 게시글 수
-    const fakePosts = Array(diff > limit ? limit : diff).fill().map(v => ({
-      id: Math.random().toString(),
-      User: {
-        id: 1,
-        nickname: '킴재쿤'
-      },
-      content: `Hello, Infinite scrolling~ ${Math.random()}`,
-      Comments: [],
-      Images: []
-    }));
+    const fakePosts = Array(diff > limit ? limit : diff)
+      .fill()
+      .map((v) => ({
+        id: Math.random().toString(),
+        User: {
+          id: 1,
+          nickname: "킴재쿤",
+        },
+        content: `Hello, Infinite scrolling~ ${Math.random()}`,
+        Comments: [],
+        Images: [],
+      }));
 
     state.mainPosts = state.mainPosts.concat(fakePosts);
     state.hasMorePost = fakePosts.length !== limit;
-  }
+  },
+  CONCAT_IMAGE_PATHS(state, payload) {
+    state.imagePaths = state.imagePaths.concat(payload);
+  },
+  REMOVE_IMAGE_PATHS(state, payload) {
+    state.imagePaths.splice(payload, 1);
+  },
 };
 
 export const actions = {
-  addPost({ commit }, payload) {
-    commit("ADD_MAIN_POST", payload);
+  addPost({ commit, state }, payload) {
+    const { content } = payload;
+    const { imagePaths } = state;
+
+    this.$axios
+      .post(
+        "http://localhost:3085/post",
+        {
+          content,
+          imagePaths,
+          // content: payload.content,
+          // imagePaths: state.imagePaths
+        },
+        {
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
+        commit("ADD_MAIN_POST", res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   },
   removePost({ commit }, payload) {
     commit("REMOVE_MAIN_POST", payload);
@@ -66,9 +96,22 @@ export const actions = {
   },
   loadPosts({ commit, state }, payload) {
     if (state.hasMorePost) {
-      commit('LOAD_POSTS')
+      commit("LOAD_POSTS");
     }
-  }
+  },
+  uploadImages({ commit }, payload) {
+    this.$axios
+      .post("http://localhost:3085/post/images", payload, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        console.log("res", res);
+        commit("CONCAT_IMAGE_PATHS", res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  },
 };
 
 /* 
