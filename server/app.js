@@ -13,7 +13,8 @@ const userRouter = require("./routes/user");
 const app = express();
 
 // db 시작
-db.sequelize.sync({ force: true }); // [Dev서버 기준] 서버 재시작할 때마다 테이블 Reset, { force: true }
+// [Dev서버 기준] 서버 재시작할 때마다 테이블 Reset, { force: true }
+db.sequelize.sync();
 passportConfig();
 
 /* Middleware */

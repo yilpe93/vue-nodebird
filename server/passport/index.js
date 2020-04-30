@@ -14,6 +14,7 @@ module.exports = () => {
       const user = await db.User.findOne({
         where: { id },
       });
+
       return done(null, user); // req.user, passport.authenticate() === true
     } catch (err) {
       console.error(err);

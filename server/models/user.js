@@ -23,7 +23,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  User.associate = (db) => {};
+  User.associate = (db) => {
+    db.User.hasMany(db.Post); // User는 게시글(Post)를 여러개 가질 수 있다.
+    db.User.hasMany(db.Comment);
+  };
 
   return User;
 };
