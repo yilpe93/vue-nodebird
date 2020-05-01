@@ -1,11 +1,16 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
-// Middleware
-const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
 const db = require("../models");
+const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
+
 const router = express.Router();
+
+router.get("/", isLoggedIn, async (req, res, next) => {
+  const user = req.user;
+  res.json(user);
+});
 
 router.post("/resigter", isNotLoggedIn, async (req, res, next) => {
   try {
@@ -31,7 +36,7 @@ router.post("/resigter", isNotLoggedIn, async (req, res, next) => {
 
     passport.authenticate("local", (err, user, info) => {
       if (err) {
-        console.error("err", err);
+        console.error(err);
         return next(err);
       }
 
@@ -43,7 +48,7 @@ router.post("/resigter", isNotLoggedIn, async (req, res, next) => {
       return req.login(user, async (err) => {
         // 세션에 사용자 저장, 이때 serializeUser가 실행된다.
         if (err) {
-          console.error("err", err);
+          console.error(err);
           return next(err);
         }
 
@@ -59,7 +64,7 @@ router.post("/resigter", isNotLoggedIn, async (req, res, next) => {
 router.post("/login", isNotLoggedIn, (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
-      console.error("err", err);
+      console.error(err);
       return next(err);
     }
 
@@ -71,11 +76,10 @@ router.post("/login", isNotLoggedIn, (req, res, next) => {
     return req.login(user, async (err) => {
       // 세션에 사용자 저장, 이때 serializeUser가 실행된다.
       if (err) {
-        console.error("err", err);
+        console.error(err);
         return next(err);
       }
 
-      console.log("login", req.isAuthenticated());
       return res.json(user);
     });
   })(req, res, next);

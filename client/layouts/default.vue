@@ -8,7 +8,9 @@
         <v-spacer />
         <v-toolbar-items>
           <v-form @submit.prevent="onSearchHashtag">
-            <div :style="{display: 'flex', alignItems: 'center', height: '100%'}">
+            <div
+              :style="{ display: 'flex', alignItems: 'center', height: '100%' }"
+            >
               <v-text-field
                 v-model="hashtag"
                 label="검색"
@@ -54,17 +56,17 @@ export default {
   },
   data() {
     return {
-      hashtag: ''
-    }
+      hashtag: "",
+    };
   },
   methods: {
     onSearchHashtag() {
       this.$router.push({
-        path: `/hashtag/${this.hashtag}`
+        path: `/hashtag/${this.hashtag}`,
       });
-      this.hashtag = '';
-    }
-  }
+      this.hashtag = "";
+    },
+  },
 };
 </script>
 

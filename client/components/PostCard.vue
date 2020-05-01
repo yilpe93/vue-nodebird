@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card style="margin-bottom: 20px;">
-      <!-- <v-image /> -->
+      <post-images :images="post.Images || []" />
       <v-card-text>
         <div>
           <h3>
@@ -59,10 +59,12 @@
 
 <script>
 const CommentForm = () => import("~/components/CommentForm");
+const PostImages = () => import("~/components/PostImages");
 
 export default {
   components: {
     CommentForm,
+    PostImages,
   },
   props: {
     post: {
@@ -77,10 +79,14 @@ export default {
   methods: {
     onRemovePost() {
       this.$store.dispatch("posts/removePost", {
-        id: this.post.id,
+        postId: this.post.id,
       });
     },
     onToggleComment() {
+      if (!this.commentOpened) {
+        this.$store.dispatch("posts/loadComments", { postId: this.post.id });
+      }
+
       this.commentOpened = !this.commentOpened;
     },
   },

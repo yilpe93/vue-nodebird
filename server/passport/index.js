@@ -13,6 +13,7 @@ module.exports = () => {
       // 이후 캐싱처리..
       const user = await db.User.findOne({
         where: { id },
+        attributes: ["id", "nickname"],
       });
 
       return done(null, user); // req.user, passport.authenticate() === true

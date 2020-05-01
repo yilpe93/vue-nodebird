@@ -61,6 +61,18 @@ export const mutations = {
 // 비동기적 작업
 export const actions = {
   // const { commit, dispatch, state, rootState, getters } = context
+  loadUser({ commit }) {
+    this.$axios
+      .get("http://localhost:3085/user/resigter", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        commit("SET_ME", res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  },
   signUp({ commit }, payload) {
     const { email, nickname, password } = payload;
     this.$axios

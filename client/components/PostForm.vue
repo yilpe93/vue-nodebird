@@ -80,6 +80,7 @@ export default {
         this.$store
           .dispatch("posts/addPost", {
             content,
+            image: this.imagePaths,
           })
           .then((_) => {
             this.content = "";
@@ -88,7 +89,7 @@ export default {
             this.successMessages = "게시글 등록 성공!";
           })
           .catch((err) => {
-            console.log("err", err);
+            console.error(err);
           });
       }
     },

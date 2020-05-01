@@ -14,8 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       password: {
         type: DataTypes.STRING(100),
         allowNull: false, // 필수
-      },
-      // createdAt, updatedAt => 테이블 자동 생성
+      }, // id, createdAt, updatedAt => 필드 자동 생성
     },
     {
       charset: "utf8",

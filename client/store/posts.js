@@ -4,11 +4,7 @@ export const state = () => ({
   imagePaths: [],
 });
 
-// 실무적으로는 lastId 기반을 통해서 불러온다.
-// totalPosts 가정
-const totalPosts = 51;
 const limit = 10;
-
 /* 
   # [Module] vue-virtual-scroll-list (https://codespots.com/library/item/650#using-by-npm-module)
   
@@ -30,32 +26,23 @@ export const mutations = {
     state.imagePaths = [];
   },
   REMOVE_MAIN_POST(state, payload) {
-    const index = state.mainPosts.findIndex((v) => v.id === payload.id);
+    const index = state.mainPosts.findIndex((v) => v.id === payload.postId);
     state.mainPosts.splice(index, 1);
+  },
+  LOAD_COMMENTS(state, payload) {
+    const index = state.mainPosts.findIndex((v) => v.id === payload.postId);
+    state.mainPosts[index].Comments = payload;
   },
   ADD_COMMENT(state, payload) {
     const index = state.mainPosts.findIndex((v) => v.id === payload.postId);
     state.mainPosts[index].Comments.unshift(payload);
   },
-  LOAD_POSTS(state) {
-    const diff = totalPosts - state.mainPosts.length; // 아직 안 불러온 게시글 수
-    const fakePosts = Array(diff > limit ? limit : diff)
-      .fill()
-      .map((v) => ({
-        id: Math.random().toString(),
-        User: {
-          id: 1,
-          nickname: "킴재쿤",
-        },
-        content: `Hello, Infinite scrolling~ ${Math.random()}`,
-        Comments: [],
-        Images: [],
-      }));
-
-    state.mainPosts = state.mainPosts.concat(fakePosts);
-    state.hasMorePost = fakePosts.length !== limit;
+  LOAD_POSTS(state, payload) {
+    state.mainPosts = state.mainPosts.concat(payload);
+    state.hasMorePost = payload.length !== limit;
   },
   CONCAT_IMAGE_PATHS(state, payload) {
+    console.log("payload", payload);
     state.imagePaths = state.imagePaths.concat(payload);
   },
   REMOVE_IMAGE_PATHS(state, payload) {
@@ -68,12 +55,14 @@ export const actions = {
     const { content } = payload;
     const { imagePaths } = state;
 
+    console.log(content, imagePaths);
+
     this.$axios
       .post(
         "http://localhost:3085/post",
         {
           content,
-          imagePaths,
+          image: imagePaths,
           // content: payload.content,
           // imagePaths: state.imagePaths
         },
@@ -82,6 +71,7 @@ export const actions = {
         }
       )
       .then((res) => {
+        console.time();
         commit("ADD_MAIN_POST", res.data);
       })
       .catch((err) => {
@@ -89,14 +79,57 @@ export const actions = {
       });
   },
   removePost({ commit }, payload) {
-    commit("REMOVE_MAIN_POST", payload);
+    this.$axios
+      .delete(`http://localhst:3085/post/${payload.postId}`, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        commit("REMOVE_MAIN_POST", payload);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  },
+  loadComment({ commit, payload }) {
+    const { postId } = payload;
+    this.$axios
+      .get(`http://localhost:3085/post/${postId}/comments`)
+      .then((res) => {
+        commit("LOAD_COMMENTS", res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   },
   addComment({ commit }, payload) {
-    commit("ADD_COMMENT", payload);
+    const { content, postId } = payload;
+    this.$axios
+      .post(
+        `http://localhost:3085/post/${postId}/comment`,
+        {
+          content,
+        },
+        { withCredentials: true }
+      )
+      .then((res) => {
+        commit("ADD_COMMENT", res.data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   },
   loadPosts({ commit, state }, payload) {
     if (state.hasMorePost) {
-      commit("LOAD_POSTS");
+      this.$axios
+        .get(
+          `http://localhost:3085/posts?offset=${state.mainPosts.length}&limit=10`
+        )
+        .then((res) => {
+          commit("LOAD_POSTS", res.data);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     }
   },
   uploadImages({ commit }, payload) {
@@ -105,7 +138,6 @@ export const actions = {
         withCredentials: true,
       })
       .then((res) => {
-        console.log("res", res);
         commit("CONCAT_IMAGE_PATHS", res.data);
       })
       .catch((err) => {

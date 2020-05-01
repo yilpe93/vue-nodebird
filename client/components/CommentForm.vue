@@ -56,12 +56,8 @@ export default {
 
         this.$store
           .dispatch("posts/addComment", {
-            id: Date.now(),
             postId,
             content,
-            User: {
-              nickname: this.me.nickname,
-            },
           })
           .then((_) => {
             this.content = "";
@@ -69,7 +65,7 @@ export default {
             this.hideDetails = false;
             this.successMessages = "댓글이 작성되었습니다.";
           })
-          .catch((err) => console.log("err", err));
+          .catch((err) => console.error(err));
       }
     },
   },
