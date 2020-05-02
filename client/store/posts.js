@@ -42,7 +42,6 @@ export const mutations = {
     state.hasMorePost = payload.length !== limit;
   },
   CONCAT_IMAGE_PATHS(state, payload) {
-    console.log("payload", payload);
     state.imagePaths = state.imagePaths.concat(payload);
   },
   REMOVE_IMAGE_PATHS(state, payload) {
@@ -55,11 +54,9 @@ export const actions = {
     const { content } = payload;
     const { imagePaths } = state;
 
-    console.log(content, imagePaths);
-
     this.$axios
       .post(
-        "http://localhost:3085/post",
+        "/post",
         {
           content,
           image: imagePaths,
@@ -71,7 +68,6 @@ export const actions = {
         }
       )
       .then((res) => {
-        console.time();
         commit("ADD_MAIN_POST", res.data);
       })
       .catch((err) => {
@@ -80,7 +76,7 @@ export const actions = {
   },
   removePost({ commit }, payload) {
     this.$axios
-      .delete(`http://localhst:3085/post/${payload.postId}`, {
+      .delete(`/post/${payload.postId}`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -93,7 +89,7 @@ export const actions = {
   loadComment({ commit, payload }) {
     const { postId } = payload;
     this.$axios
-      .get(`http://localhost:3085/post/${postId}/comments`)
+      .get(`/post/${postId}/comments`)
       .then((res) => {
         commit("LOAD_COMMENTS", res.data);
       })
@@ -105,7 +101,7 @@ export const actions = {
     const { content, postId } = payload;
     this.$axios
       .post(
-        `http://localhost:3085/post/${postId}/comment`,
+        `/post/${postId}/comment`,
         {
           content,
         },
@@ -119,22 +115,39 @@ export const actions = {
       });
   },
   loadPosts({ commit, state }, payload) {
-    if (state.hasMorePost) {
-      this.$axios
-        .get(
-          `http://localhost:3085/posts?offset=${state.mainPosts.length}&limit=10`
-        )
-        .then((res) => {
-          commit("LOAD_POSTS", res.data);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
+    try {
+      if (payload && patload.reset) {
+        const res = this.$axios
+          .get(`/posts?offset=${state.mainPosts.length}&limit=10`)
+          .then((res) => {
+            commit("LOAD_POSTS", {
+              data: res.data,
+              reset: true,
+            });
+          });
+
+        return;
+      }
+
+      if (state.hasMorePost) {
+        this.$axios
+          .get(`/posts?offset=${state.mainPosts.length}&limit=10`)
+          .then((res) => {
+            commit("LOAD_POSTS", res.data);
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+
+        return;
+      }
+    } catch (err) {
+      console.error(err);
     }
   },
   uploadImages({ commit }, payload) {
     this.$axios
-      .post("http://localhost:3085/post/images", payload, {
+      .post("/post/images", payload, {
         withCredentials: true,
       })
       .then((res) => {
@@ -150,9 +163,4 @@ export const actions = {
   # root, default false
   { root: true }
   store/index.js 참조할 수 있다.
-*/
-
-/* 
-  this.$store.state.posts.name;
-  this.$store.commit("posts/BYE");
 */

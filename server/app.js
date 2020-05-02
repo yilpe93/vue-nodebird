@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-// const bcrypt = require("bcrypt");
 const passport = require("passport");
 const session = require("express-session");
 const cookie = require("cookie-parser");
@@ -30,7 +29,7 @@ app.use(morgan("dev"));
 */
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "http://localhost:3080",
     credentials: true,
   })
 );

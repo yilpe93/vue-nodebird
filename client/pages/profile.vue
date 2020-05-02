@@ -21,13 +21,14 @@
       <v-container>
         <v-subheader>팔로잉</v-subheader>
         <follow-list :users="followingList" :remove="removeFollowing" />
-        <v-btn 
-          v-if="hasMoreFollowing" 
-          dark 
-          color="blue" 
-          style="width: 100%"
+        <v-btn
+          v-if="hasMoreFollowing"
+          dark
+          color="blue"
+          style="width: 100%;"
           @click="loadMoreFollowing"
-        >더보기</v-btn>
+          >더보기</v-btn
+        >
       </v-container>
     </v-card>
 
@@ -35,13 +36,14 @@
       <v-container>
         <v-subheader>팔로워</v-subheader>
         <follow-list :users="followerList" :remove="removeFollower" />
-        <v-btn 
-          v-if="hasMoreFollower" 
-          dark 
-          color="blue" 
-          style="width: 100%"
+        <v-btn
+          v-if="hasMoreFollower"
+          dark
+          color="blue"
+          style="width: 100%;"
           @click="loadMoreFollower"
-        >더보기</v-btn>
+          >더보기</v-btn
+        >
       </v-container>
     </v-card>
   </v-container>
@@ -80,11 +82,11 @@ export default {
     },
     hasMoreFollower() {
       return this.$store.state.users.followerList;
-    }
+    },
   },
   fetch({ store }) {
     store.dispatch("users/loadFollowing");
-    store.dispatch("users/loadFollower");
+    return store.dispatch("users/loadFollower");
   },
   methods: {
     onChangeNickname() {
@@ -103,7 +105,7 @@ export default {
     },
     loadMoreFollower() {
       this.$store.dispatch("users/loadFollower");
-    }
+    },
   },
 };
 </script>

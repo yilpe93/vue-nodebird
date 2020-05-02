@@ -18,6 +18,11 @@ module.exports = (sequelize, DataTypes) => {
     db.Post.belongsTo(db.User); // Post는 User에 포함되어 있다. => UserId(User 모델과의 관계로 자동으로 추가 시켜준다.)
     db.Post.hasMany(db.Comment);
     db.Post.hasMany(db.Image);
+    db.Post.belongsToMany(db.User, {
+      through: "Like",
+      as: "Likers",
+    });
+    db.Post.belongsTo(db.Post, { as: "Retweet" }); // PostId => RetweetId
     db.Post.belongsToMany(db.Hashtag, {
       through: "PostHashtag",
     }); // PostHashtag => 중간 테이블 역할

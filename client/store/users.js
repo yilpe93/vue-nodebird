@@ -4,6 +4,7 @@ export const state = () => ({
   followerList: [],
   hasMoreFollowing: true,
   hasMoreFollower: true,
+  ohter: null, // 남의 정보
 });
 
 const totalFollowings = 6;
@@ -14,6 +15,9 @@ const limit = 3;
 export const mutations = {
   SET_ME(state, payload) {
     state.me = payload;
+  },
+  SET_OTHER(state, payload) {
+    state.me.nickname = payload.nickname;
   },
   CHANGE_NICKNAME(state, payload) {
     state.me.nickname = payload.nickname;
@@ -61,22 +65,30 @@ export const mutations = {
 // 비동기적 작업
 export const actions = {
   // const { commit, dispatch, state, rootState, getters } = context
-  loadUser({ commit }) {
-    this.$axios
-      .get("http://localhost:3085/user/resigter", {
+  async loadUser({ state, commit }) {
+    try {
+      const res = await this.$axios.get("/user", {
         withCredentials: true,
-      })
-      .then((res) => {
-        commit("SET_ME", res.data);
-      })
-      .catch((err) => {
-        console.error(err);
       });
+      commit("SET_ME", res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  },
+  async loadOther({ commit }, payload) {
+    try {
+      const res = await this.$axios.get(`/user/${payload.userId}`, {
+        withCredentials: true,
+      });
+      commit("SET_OTHER", res.data);
+    } catch (err) {
+      console.error(err);
+    }
   },
   signUp({ commit }, payload) {
     const { email, nickname, password } = payload;
     this.$axios
-      .post("http://localhost:3085/user/resigter", {
+      .post("/user/resigter", {
         email,
         nickname,
         password,
@@ -93,11 +105,7 @@ export const actions = {
 
     // withCredentials: true => cols로 인한 Local에서 쿠키가 처리될 수 있도록
     this.$axios
-      .post(
-        "http://localhost:3085/user/login",
-        { email, password },
-        { withCredentials: true }
-      )
+      .post("/user/login", { email, password }, { withCredentials: true })
       .then((res) => {
         commit("SET_ME", res.data);
       })
@@ -107,7 +115,7 @@ export const actions = {
   },
   logOut({ commit }) {
     this.$axios
-      .post("http://localhost:3085/user/logout", {}, { withCredentials: true })
+      .post("/user/logout", {}, { withCredentials: true })
       .then((res) => {
         commit("SET_ME", null);
       })

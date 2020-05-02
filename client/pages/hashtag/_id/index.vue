@@ -25,14 +25,14 @@ export default {
     },
     hasMorePost() {
       return this.$store.state.posts.hasMorePost;
-    }
+    },
   },
   // 컴포넌트 moute되기 전,
   fetch({ store }) {
-    store.dispatch('posts/loadPosts');
+    return store.dispatch("posts/loadPosts");
   },
   mounted() {
-    window.addEventListener('scroll', this.onScroll);
+    window.addEventListener("scroll", this.onScroll);
     /* 
       # document.documentElement.clientHeight
       # document.documentElement.scrollHeight
@@ -41,17 +41,20 @@ export default {
     */
   },
   beforeDestroy() {
-    window.removeEventListener('scorll', this.onScroll);
+    window.removeEventListener("scorll", this.onScroll);
   },
   methods: {
     onScroll() {
-      if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
+      if (
+        window.scrollY + document.documentElement.clientHeight >
+        document.documentElement.scrollHeight - 300
+      ) {
         if (this.hasMorePost) {
-          this.$store.dispatch('posts/loadPosts');
+          this.$store.dispatch("posts/loadPosts");
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

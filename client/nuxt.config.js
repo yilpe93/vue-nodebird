@@ -20,11 +20,9 @@ module.exports = {
       },
     ],
   ],
-  /* 
-    * Axios  Options 
-    axios: {
-      option1,
-      option2
-    }
-  */
+  axios: {
+    browserBaeURL: "http://localhost:3085", // client axios
+    baseURL: "http://localhost:3085", // server axios
+    https: false,
+  },
 };
