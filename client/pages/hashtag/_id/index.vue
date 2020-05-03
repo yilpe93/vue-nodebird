@@ -27,7 +27,6 @@ export default {
       return this.$store.state.posts.hasMorePost;
     },
   },
-  // 컴포넌트 moute되기 전,
   fetch({ store }) {
     return store.dispatch("posts/loadPosts");
   },

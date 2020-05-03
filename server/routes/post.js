@@ -30,7 +30,7 @@ const upload = multer({
   - none: 파일 업로드 X
 */
 router.post("/images", isLoggedIn, upload.array("image"), (req, res) => {
-  res.json(req.files.map((v) => v.filename));
+  return res.json(req.files.map((v) => v.filename));
 });
 
 router.post("/", isLoggedIn, async (req, res) => {
@@ -41,18 +41,6 @@ router.post("/", isLoggedIn, async (req, res) => {
       content,
       UserId: req.user.id,
     });
-
-    if (image) {
-      if (Array.isArray(image)) {
-        await Promise.all(
-          image.map((img) => {
-            return db.Image.create({ src: img, PostId: newPost.id });
-          })
-        );
-      } else {
-        await db.Image.create({ src: image, PostId: newPost.id });
-      }
-    }
 
     if (hashtags) {
       const result = await Promise.all(
@@ -66,6 +54,18 @@ router.post("/", isLoggedIn, async (req, res) => {
 
       await newPost.addHashtags(result.map((r) => r[0]));
       // db.sequlize.query(`SQL문`);
+    }
+
+    if (image) {
+      if (Array.isArray(image)) {
+        await Promise.all(
+          image.map((img) => {
+            return db.Image.create({ src: img, PostId: newPost.id });
+          })
+        );
+      } else {
+        await db.Image.create({ src: image, PostId: newPost.id });
+      }
     }
 
     /* 
@@ -82,6 +82,11 @@ router.post("/", isLoggedIn, async (req, res) => {
         },
         {
           model: db.Image,
+        },
+        {
+          model: db.User,
+          as: "Likers",
+          attributes: ["id"],
         },
       ],
     });
@@ -125,18 +130,18 @@ router.get("/:id/comments", async (req, res, next) => {
       where: {
         PostId: req.params.id,
       },
-      includes: [
+      include: [
         {
           model: db.User,
           attributes: ["id", "nickname"],
         },
       ],
-      order: [["createdAt", "ASC"]],
-      // ASC => 오름차순, DESC => 내림차순
+      order: [["createdAt", "ASC"]], // ASC => 오름차순, DESC => 내림차순
     });
 
     return res.json(comments);
   } catch (err) {
+    console.error(err);
     next(err);
   }
 });
@@ -195,7 +200,7 @@ router.post("/:id/retweet", isLoggedIn, async (req, res, next) => {
       req.user.id === post.UserId ||
       (post.Retweet && post.Retweet.UserId === req.user.id)
     ) {
-      return status(403).send("자신의 글은 리트윗할 수 없습니다.");
+      return res.status(403).send("자신의 글은 리트윗할 수 없습니다.");
     }
 
     const retweetTargetId = post.RetweetId || post.id;
@@ -217,13 +222,16 @@ router.post("/:id/retweet", isLoggedIn, async (req, res, next) => {
     });
 
     const retweetWithPrevPost = await db.Post.findOne({
-      where: {
-        id: retweet.id,
-      },
+      where: { id: retweet.id },
       include: [
         {
           model: db.User,
           attributes: ["id", "nickname"],
+        },
+        {
+          model: db.User,
+          as: "Likers",
+          attributes: ["id"],
         },
         {
           model: db.Post,
@@ -244,10 +252,11 @@ router.post("/:id/retweet", isLoggedIn, async (req, res, next) => {
     return res.json(retweetWithPrevPost);
   } catch (err) {
     console.error(err);
+    next(err);
   }
 });
 
-// '좋아요' 등록
+// Add Liker
 router.post("/:id/like", isLoggedIn, async (req, res, next) => {
   try {
     const post = await db.Post.findOne({
@@ -262,10 +271,11 @@ router.post("/:id/like", isLoggedIn, async (req, res, next) => {
     return res.json({ userId: req.user.id });
   } catch (err) {
     console.error(err);
+    next(err);
   }
 });
 
-// '좋아요' 취소
+// Delete Liker
 router.delete("/:id/like", isLoggedIn, async (req, res, next) => {
   try {
     const post = await db.Post.findOne({
@@ -280,6 +290,7 @@ router.delete("/:id/like", isLoggedIn, async (req, res, next) => {
     return res.json({ userId: req.user.id });
   } catch (err) {
     console.error(err);
+    next(err);
   }
 });
 

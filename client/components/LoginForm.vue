@@ -29,8 +29,23 @@
   <v-container v-else>
     <v-card>
       <v-container>
-        {{ me.nickname }}님 로그인되었습니다.
-        <v-btn @click="onLogOut">로그아웃</v-btn>
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          {{ me.nickname }}님 로그인되었습니다.
+          <v-btn @click="onLogOut">로그아웃</v-btn>
+        </div>
+        <div>
+          <v-row>
+            <v-col cols="4">{{ me.Followings.length }} 팔로잉</v-col>
+            <v-col cols="4">{{ me.Followers.length }} 팔로워</v-col>
+            <v-col cols="4">{{ me.Posts.length }} 게시글</v-col>
+          </v-row>
+        </div>
       </v-container>
     </v-card>
   </v-container>
@@ -52,6 +67,7 @@ export default {
   },
   computed: {
     me() {
+      console.log("me", this.$store.state.users.me);
       return this.$store.state.users.me;
     },
   },
@@ -67,7 +83,11 @@ export default {
       }
     },
     onLogOut() {
-      this.$store.dispatch("users/logOut");
+      this.$store.dispatch("users/logOut").then((_) => {
+        this.email = "";
+        this.password = "";
+        this.$router.push({ path: "/" });
+      });
     },
   },
 };

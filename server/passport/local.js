@@ -8,7 +8,7 @@ module.exports = () => {
     new LocalStrategy(
       {
         usernameField: "email",
-        passwordRield: "password",
+        passwordField: "password",
       },
       async (email, password, done) => {
         try {
@@ -23,6 +23,7 @@ module.exports = () => {
 
           // password 비교
           const result = await bcrypt.compare(password, exUser.password);
+
           if (result) {
             return done(null, exUser);
           } else {

@@ -32,7 +32,7 @@
 
     <v-row no-gutters>
       <v-col cols="12" md="4">
-        <LoginForm />
+        <login-form />
       </v-col>
       <v-col cols="12" md="8">
         <nuxt />
@@ -71,9 +71,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.nav {
+  .btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.row {
+  flex: none;
+}
+
 .search-field {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
 }
 </style>

@@ -32,7 +32,7 @@ export default {
   },
   // 컴포넌트 moute되기 전,
   fetch({ store }) {
-    return store.dispatch("posts/loadPosts");
+    return store.dispatch("posts/loadPosts", { reset: true });
   },
   mounted() {
     window.addEventListener("scroll", this.onScroll);

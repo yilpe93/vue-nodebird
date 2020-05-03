@@ -62,8 +62,8 @@ export default {
           .then((_) => {
             this.content = "";
             this.success = true;
-            this.hideDetails = false;
             this.successMessages = "댓글이 작성되었습니다.";
+            this.hideDetails = false;
           })
           .catch((err) => console.error(err));
       }

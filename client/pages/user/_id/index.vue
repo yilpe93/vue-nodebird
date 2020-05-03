@@ -27,6 +27,17 @@ export default {
       return this.$store.state.posts.hasMorePost;
     },
   },
+  // fetch({ store, params }) {
+  //   return Promise.all([
+  //     store.dispatch("posts/loadUserPosts", {
+  //       userId: params.id,
+  //       reset: true,
+  //     }),
+  //     store.dispatch("users/loadOther", {
+  //       userId: params.id,
+  //     }),
+  //   ]);
+  // },
   fetch({ store }) {
     return store.dispatch("posts/loadPosts");
   },
