@@ -82,6 +82,37 @@ router.post("/", isNotLoggedIn, async (req, res, next) => {
   }
 });
 
+router.get("/:id", async (req, res, next) => {
+  try {
+    const user = await db.User.findOne({
+      where: { id: parseInt(req.params.id, 10) },
+      include: [
+        {
+          model: db.Post,
+          as: "Posts",
+          attributes: ["id"],
+        },
+        {
+          model: db.User,
+          as: "Followings",
+          attributes: ["id"],
+        },
+        {
+          model: db.User,
+          as: "Followers",
+          attributes: ["id"],
+        },
+      ],
+      attributes: ["id", "nickname"],
+    });
+
+    return res.json(user);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 router.post("/login", isNotLoggedIn, (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
@@ -133,6 +164,91 @@ router.post("/logout", isLoggedIn, (req, res) => {
   return res.status(200).send("로그아웃 되었습니다.");
 });
 
+router.get("/:id/posts", async (req, res, next) => {
+  try {
+    let where = {
+      UserId: parseInt(req.params.id, 10) || (req.user && req.user.id) || 0,
+      RetweetId: null,
+    };
+
+    if (parseInt(req.query.lastId, 10)) {
+      where[db.Sequelize.Op.lt] = parseInt(req.query.lastId, 10);
+    }
+
+    const posts = await db.Post.findAll({
+      where,
+      include: [
+        {
+          model: db.User,
+          attributes: ["id", "nickname"],
+        },
+        {
+          model: db.Image,
+        },
+        {
+          model: db.User,
+          through: "Like",
+          as: "Likers",
+          attributes: ["id"],
+        },
+      ],
+      order: [["createdAt", "DESC"]], // ASC => 오름차순, DESC => 내림차순
+    });
+
+    return res.json(posts);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+// patch => 부분 수정
+router.patch("/nickname", isLoggedIn, async (req, res, next) => {
+  try {
+    await db.User.update(
+      {
+        nickname: req.body.nickname,
+      },
+      {
+        where: { id: req.user.id },
+      }
+    );
+
+    res.send(req.body.nickname);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+// 팔로잉 API
+router.get("/:id/followings", isLoggedIn, async (req, res, next) => {
+  try {
+    let where = {};
+
+    if (parseInt(req.query.lastId, 10)) {
+      where = {
+        id: {
+          [db.Sequelize.Op.gt]: parseInt(req.query.lastId, 10),
+        },
+      };
+    }
+
+    const me = await db.User.findOne({ where: { id: req.user.id } });
+
+    const followings = await me.getFollowings({
+      where,
+      attributes: ["id", "nickname"],
+      limit: parseInt(req.query.limit || 3, 10),
+    });
+
+    return res.json(followings);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 router.post("/:id/follow", isLoggedIn, async (req, res, next) => {
   try {
     const me = await db.User.findOne({
@@ -161,54 +277,31 @@ router.delete("/:id/follow", isLoggedIn, async (req, res, next) => {
   }
 });
 
-// patch => 부분 수정
-router.patch("/nickname", isLoggedIn, async (req, res, next) => {
-  try {
-    await db.User.update(
-      {
-        nickname: req.body.nickname,
-      },
-      {
-        where: { id: req.user.id },
-      }
-    );
-
-    res.send(req.body.nickname);
-  } catch (err) {
-    console.error(err);
-    next(err);
-  }
-});
-
-router.get("/:id/followings", isLoggedIn, async (req, res, next) => {
-  try {
-    const me = await db.User.findOne({
-      where: { id: req.user.id },
-    });
-    const followings = await me.getFollowings({
-      attributes: ["id", "nickname"],
-      limit: parseInt(req.query.limit || 3, 10),
-      offset: parseInt(req.query.offset || 0, 10),
-    });
-    return res.json(followings);
-  } catch (err) {
-    console.error(err);
-  }
-});
-
+// 팔로워 API
 router.get("/:id/followers", isLoggedIn, async (req, res, next) => {
   try {
-    const me = await db.User.findOne({
-      where: { id: req.user.id },
-    });
+    let where = {};
+
+    if (parseInt(req.query.lastId, 10)) {
+      where = {
+        id: {
+          [db.Sequelize.Op.gt]: parseInt(req.query.lastId, 10),
+        },
+      };
+    }
+
+    const me = await db.User.findOne({ where: { id: req.user.id } });
+
     const followers = await me.getFollowers({
+      where,
       attributes: ["id", "nickname"],
       limit: parseInt(req.query.limit || 3, 10),
-      offset: parseInt(req.query.offset || 0, 10),
     });
+
     return res.json(followers);
   } catch (err) {
     console.error(err);
+    next(err);
   }
 });
 

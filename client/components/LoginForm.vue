@@ -67,7 +67,6 @@ export default {
   },
   computed: {
     me() {
-      console.log("me", this.$store.state.users.me);
       return this.$store.state.users.me;
     },
   },

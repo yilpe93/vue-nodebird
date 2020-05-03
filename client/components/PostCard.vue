@@ -2,9 +2,7 @@
   <div style="margin-bottom: 20px;">
     <v-card>
       <div v-if="post.RetweetId && post.Retweet">
-        <v-subheader
-          >{{ post.User.nickname }}님이 리트윗하셨습니다.</v-subheader
-        >
+        <v-subheader>{{ post.User.nickname }}님이 리트윗하셨습니다.</v-subheader>
         <v-card>
           <post-content :post="post.Retweet" />
         </v-card>
@@ -108,9 +106,12 @@ export default {
         return alert("로그인이 필요합니다.");
       }
 
-      this.$store.dispatch("posts/retweet", {
+      return this.$store.dispatch("posts/retweet", {
         postId: this.post.id,
-      });
+      })
+      // .then(_ => {
+      //   this.$store.dispatch('users/loadUser');
+      // });
     },
     onClickHeart() {
       if (!this.me) {

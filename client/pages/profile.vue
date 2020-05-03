@@ -6,12 +6,7 @@
       </v-container>
       <v-container>
         <v-form v-model="valid" @submit.prevent="onChangeNickname">
-          <v-text-field
-            v-model="nickname"
-            label="닉네임"
-            :rules="nicknameRules"
-            reuqired
-          />
+          <v-text-field v-model="nickname" label="닉네임" :rules="nicknameRules" reuqired />
           <v-btn dark color="blue" type="submit">수정</v-btn>
         </v-form>
       </v-container>
@@ -27,8 +22,7 @@
           color="blue"
           style="width: 100%;"
           @click="loadMoreFollowings"
-          >더보기</v-btn
-        >
+        >더보기</v-btn>
       </v-container>
     </v-card>
 
@@ -42,8 +36,7 @@
           color="blue"
           style="width: 100%;"
           @click="loadMoreFollowers"
-          >더보기</v-btn
-        >
+        >더보기</v-btn>
       </v-container>
     </v-card>
   </v-container>
@@ -77,20 +70,16 @@ export default {
       return this.$store.state.users.followerList;
     },
     hasMoreFollowing() {
-      return (
-        this.$store.state.users.hasMoreFollowing && !this.followingList.isEmpty
-      );
+      return this.$store.state.users.hasMoreFollowing;
     },
     hasMoreFollower() {
-      return (
-        this.$store.state.users.hasMoreFollower && !this.followerList.isEmpty
-      );
+      return this.$store.state.users.hasMoreFollower;
     },
   },
   fetch({ store }) {
     return Promise.all([
-      store.dispatch("users/loadFollowings", { offset: 0 }),
-      store.dispatch("users/loadFollowers", { offset: 0 }),
+      store.dispatch("users/loadFollowings", { reset: true }),
+      store.dispatch("users/loadFollowers", { reset: true }),
     ]);
   },
   methods: {

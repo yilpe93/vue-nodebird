@@ -1,16 +1,17 @@
 const express = require("express");
+
 const db = require("../models");
+
 const router = express.Router();
 
-router.get("/", async (req, res, next) => {
+router.get("/:tag", async (req, res, next) => {
   try {
     let where = {};
 
     if (parseInt(req.query.lastId, 10)) {
       where = {
         id: {
-          [db.Sequelize.Op.lt]: parseInt(req.query.lastId, 10), // less than
-          /* lt (미만), lte(이하), gt(초과), gte(이상), ne(불일치), in, nin 등 */
+          [db.Sequelize.Op.lt]: parseInt(req.query.lastId, 10),
         },
       };
     }
@@ -18,6 +19,10 @@ router.get("/", async (req, res, next) => {
     const posts = await db.Post.findAll({
       where,
       include: [
+        {
+          model: db.Hashtag,
+          where: { name: decodeURIComponent(req.params.tag) }, // decodeURIComponent => 한글 주소 처리를 위해
+        },
         {
           model: db.User,
           attributes: ["id", "nickname"],

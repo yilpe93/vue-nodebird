@@ -35,13 +35,13 @@ export default {
     return store.dispatch("posts/loadPosts", { reset: true });
   },
   mounted() {
-    window.addEventListener("scroll", this.onScroll);
     /* 
       # document.documentElement.clientHeight
       # document.documentElement.scrollHeight
       # window.scrollY
       # window.scrollY + document.documentElement.clientHeight === document.documentElement.scrollHeight
     */
+    window.addEventListener("scroll", this.onScroll);
   },
   beforeDestroy() {
     window.removeEventListener("scorll", this.onScroll);

@@ -16,28 +16,12 @@
         />
 
         <div :style="hideDetails ? { marginTop: '10px' } : null">
-          <v-btn type="submit" color="green" absolute right style="color: #fff;"
-            >짹짹</v-btn
-          >
-          <input
-            ref="imageInput"
-            type="file"
-            multiple
-            hidden
-            @change="onChangeImages"
-          />
+          <v-btn type="submit" color="green" absolute right style="color: #fff;">짹짹</v-btn>
+          <input ref="imageInput" type="file" multiple hidden @change="onChangeImages" />
           <v-btn type="button" @click="onClickImageUpload">이미지 업로드</v-btn>
           <div>
-            <p
-              v-for="(p, i) in imagePaths"
-              :key="p"
-              style="display: inline-block;"
-            >
-              <img
-                :src="`http://localhost:3085/${p}`"
-                :alt="p"
-                style="width: 200px;"
-              />
+            <p v-for="(p, i) in imagePaths" :key="p" style="display: inline-block;">
+              <img :src="`http://localhost:3085/${p}`" :alt="p" style="width: 200px;" />
               <button type="button" @click="onRemoveImage(i)">제거</button>
             </p>
           </div>
@@ -87,6 +71,9 @@ export default {
             this.hideDetails = false;
             this.success = true;
             this.successMessages = "게시글 등록 성공!";
+          }).
+          then(_ => {
+            this.$store.dispatch('users/loadUser');
           })
           .catch((err) => {
             console.error(err);

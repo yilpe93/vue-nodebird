@@ -33,7 +33,7 @@ router.post("/images", isLoggedIn, upload.array("image"), (req, res) => {
   return res.json(req.files.map((v) => v.filename));
 });
 
-router.post("/", isLoggedIn, async (req, res) => {
+router.post("/", isLoggedIn, async (req, res, next) => {
   try {
     const { content, image } = req.body;
     const hashtags = content.match(/#[^\s#]+/g);
@@ -45,7 +45,7 @@ router.post("/", isLoggedIn, async (req, res) => {
     if (hashtags) {
       const result = await Promise.all(
         hashtags.map((tag) =>
-          db.hashtags.findOrCreate({
+          db.Hashtag.findOrCreate({
             // findOrCreate => DB에 있어면 찾고 없으면 저장
             where: { name: tag.slice(1).toLowerCase() },
           })

@@ -1,5 +1,16 @@
 <template>
   <v-container>
+    <v-card style="margin-bottom: 20px;">
+      <v-container>
+        {{ other.nickname }}
+        <v-row>
+          <v-col cols="4">{{ other.Followings.length }} 팔로잉</v-col>
+          <v-col cols="4">{{ other.Followers.length }} 팔로워</v-col>
+          <v-col cols="4">{{ other.Posts.length }} 게시글</v-col>
+        </v-row>
+      </v-container>
+    </v-card>
+
     <div>
       <post-card v-for="post in mainPosts" :key="post.id" :post="post" />
     </div>
@@ -17,8 +28,8 @@ export default {
     return {};
   },
   computed: {
-    me() {
-      return this.$store.state.users.me;
+    other() {
+      return this.$store.state.users.other;
     },
     mainPosts() {
       return this.$store.state.posts.mainPosts;
@@ -27,19 +38,17 @@ export default {
       return this.$store.state.posts.hasMorePost;
     },
   },
-  // fetch({ store, params }) {
-  //   return Promise.all([
-  //     store.dispatch("posts/loadUserPosts", {
-  //       userId: params.id,
-  //       reset: true,
-  //     }),
-  //     store.dispatch("users/loadOther", {
-  //       userId: params.id,
-  //     }),
-  //   ]);
-  // },
-  fetch({ store }) {
-    return store.dispatch("posts/loadPosts");
+  // 컴포넌트 moute되기 전,
+  fetch({ store, params }) {
+    return Promise.all([
+      store.dispatch("users/loadOther", {
+        userId: params.id,
+      }),
+      store.dispatch("posts/loadUserPosts", {
+        userId: params.id,
+        reset: true
+      }),
+    ]);
   },
   mounted() {
     window.addEventListener("scroll", this.onScroll);
@@ -60,7 +69,7 @@ export default {
         document.documentElement.scrollHeight - 300
       ) {
         if (this.hasMorePost) {
-          this.$store.dispatch("posts/loadPosts");
+          this.$store.dispatch("posts/loadUserPosts");
         }
       }
     },

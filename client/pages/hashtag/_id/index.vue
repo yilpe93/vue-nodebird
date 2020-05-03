@@ -17,9 +17,6 @@ export default {
     return {};
   },
   computed: {
-    me() {
-      return this.$store.state.users.me;
-    },
     mainPosts() {
       return this.$store.state.posts.mainPosts;
     },
@@ -27,8 +24,12 @@ export default {
       return this.$store.state.posts.hasMorePost;
     },
   },
-  fetch({ store }) {
-    return store.dispatch("posts/loadPosts");
+  // 컴포넌트 moute되기 전,
+  fetch({ store, params }) {
+    return store.dispatch('posts/loadHashtagPosts', {
+      hashtag: encodeURIComponent(params.id),
+      reset: true
+    })
   },
   mounted() {
     window.addEventListener("scroll", this.onScroll);
@@ -49,7 +50,7 @@ export default {
         document.documentElement.scrollHeight - 300
       ) {
         if (this.hasMorePost) {
-          this.$store.dispatch("posts/loadPosts");
+          this.$store.dispatch("posts/loadHashtagPosts");
         }
       }
     },
