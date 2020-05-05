@@ -82,9 +82,9 @@ module.exports = {
     https: false,
   },
   // nuxt.config.js 에서 port 설정
-  // server: {
-  //   port: 3080
-  // }
+  server: {
+    port: process.env.PORT || 3080,
+  },
 };
 
 /* 
