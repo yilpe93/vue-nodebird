@@ -79,9 +79,12 @@ module.exports = {
   axios: {
     browserBaeURL:
       process.env.NODE_ENV === "production"
-        ? "https://api.vue-twitter.com"
+        ? "http://api.vue-twitter.com"
         : "http://localhost:3085", // client axios
-    baseURL: "http://localhost:3085", // server axios
+    baseURL:
+      process.env.NODE_ENV === "production"
+        ? "http://api.vue-twitter.com"
+        : "http://localhost:3085", // client axios
     https: false,
   },
   // nuxt.config.js 에서 port 설정
