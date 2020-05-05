@@ -44,6 +44,9 @@ export const mutations = {
     const index = state.mainPosts.findIndex((v) => v.id === payload.postId);
     state.mainPosts[index].Comments.unshift(payload);
   },
+  LOAD_POST(state, payload) {
+    state.mainPosts = [payload];
+  },
   LOAD_POSTS(state, payload) {
     if (payload.reset) {
       state.mainPosts = payload.data;
@@ -155,6 +158,14 @@ export const actions = {
         console.error(err);
       });
   },
+  async loadPost({ commit }, postId) {
+    try {
+      const res = await this.$axios.get(`/post/${postId}`);
+      commit("LOAD_POST", res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  },
   loadPosts: throttle(async function ({ commit, state }, payload) {
     try {
       if (payload && payload.reset) {
@@ -181,9 +192,11 @@ export const actions = {
     } catch (err) {
       console.error(err);
     }
-  }, 3000),
+  }, 2000),
   loadUserPosts: throttle(async function ({ commit, state }, payload) {
     try {
+      if (!payload.userId) return;
+
       if (payload && payload.reset) {
         const res = await this.$axios.get(
           `/user/${payload.userId}/posts?limit=10`
@@ -212,7 +225,7 @@ export const actions = {
     } catch (err) {
       console.error(err);
     }
-  }, 3000),
+  }, 2000),
   loadHashtagPosts: throttle(async function ({ commit, state }, payload) {
     try {
       if (payload && payload.reset) {
@@ -243,7 +256,7 @@ export const actions = {
     } catch (err) {
       console.error(err);
     }
-  }, 3000),
+  }, 2000),
   uploadImages({ commit }, payload) {
     return this.$axios
       .post(
