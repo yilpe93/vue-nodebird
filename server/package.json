@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon app.js",
-    "start": "cross-env PORT=80 NODE_ENV=production node app.js"
+    "start": "cross-env PORT=80 NODE_ENV=production pm2 start app.js"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +25,7 @@
     "mysql2": "^2.1.0",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
+    "pm2": "^4.4.0",
     "sequelize": "^5.21.7"
   },
   "devDependencies": {
