@@ -1,22 +1,37 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
+const AWS = require("aws-sdk");
+const multerS3 = require("multer-s3");
 
 const db = require("../models");
 const { isLoggedIn } = require("./middlewares");
 
 const router = express.Router();
 
+AWS.config.update({
+  region: "ap-northeast-2",
+  accsessKeyId: process.env.S3_ACCESS_KEY_ID,
+  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+});
+
 const upload = multer({
-  storage: multer.diskStorage({
-    destination(req, file, done) {
-      done(null, "uploads");
-    },
-    filename(req, file, done) {
-      // 확장자 뽑아오기
-      const ext = path.extname(file.originalname);
-      const basename = path.basename(file.originalname, ext);
-      done(null, basename + Date.now() + ext);
+  // storage: multer.diskStorage({
+  //   destination(req, file, done) {
+  //     done(null, "uploads");
+  //   },
+  //   filename(req, file, done) {
+  //     // 확장자 뽑아오기
+  //     const ext = path.extname(file.originalname);
+  //     const basename = path.basename(file.originalname, ext);
+  //     done(null, basename + Date.now() + ext);
+  //   },
+  // }),
+  storage: multerS3({
+    s3: new AWS.S3(),
+    bucket: "vuetwitter",
+    key(req, file, cb) {
+      cb(null, `original/${Date.now()}${path.basename(file.originalname)}`);
     },
   }),
   limit: { fileSize: 20 * 1024 * 1024 },
@@ -30,7 +45,7 @@ const upload = multer({
   - none: 파일 업로드 X
 */
 router.post("/images", isLoggedIn, upload.array("image"), (req, res) => {
-  return res.json(req.files.map((v) => v.filename));
+  return res.json(req.files.map((v) => v.location));
 });
 
 router.post("/", isLoggedIn, async (req, res, next) => {
