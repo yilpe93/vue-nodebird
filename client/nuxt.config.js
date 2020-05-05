@@ -18,24 +18,36 @@ module.exports = {
       },
       // 공유
       {
+        hid: "ogtitle", //
         name: "og:title",
         content: "NodeBird",
       },
       {
+        hid: "ogdesc",
         name: "og:description",
         content: "NodeBird SNS",
       },
       {
+        hid: "ogtype",
         property: "og:type",
         content: "website",
       },
       {
+        hid: "ogimg",
         property: "og:image",
         content: "https://vue.nodebird.com/vue-nodebird.png",
       },
       {
+        hid: "ogurl",
         property: "og:url",
         content: "https://vue.nodebird.com",
+      },
+    ],
+    link: [
+      // Favicon
+      {
+        rel: "shortcut-icon",
+        href: "/vue-nodebird.png",
       },
     ],
   },

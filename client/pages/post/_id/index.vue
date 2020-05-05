@@ -18,20 +18,24 @@ export default {
           content: this.post.content,
         },
         {
+          hid: "ogtitle",
           name: "og:title",
           content: `${this.post.User.nickname}님의 게시글`,
         },
         {
+          hid: "ogdesc",
           name: "og:description",
           content: this.postcontent,
         },
         {
+          hid: "ogimg",
           property: "og:image",
           content: this.post.Images[0]
             ? this.post.Images[0]
             : "https://vue.nodebird.com/vue-nodebird.png",
         },
         {
+          hid: "ogurl",
           property: "og:url",
           content: `https://vue.nodebird.com/post/${this.post.id}`,
         },
