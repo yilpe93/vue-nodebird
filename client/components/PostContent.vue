@@ -3,7 +3,9 @@
     <post-images :images="post.Images || []" />
     <v-card-title>
       <h3>
-        <nuxt-link :to="'/user/' + post.User.id">{{ post.User.nickname }}</nuxt-link>
+        <nuxt-link :to="'/user/' + post.User.id">{{
+          post.User.nickname
+        }}</nuxt-link>
         <v-btn v-if="canFollow" @click="onFollow">팔로우</v-btn>
         <v-btn v-if="canUnFollow" @click="onUnFollow">언팔로우</v-btn>
       </h3>
@@ -16,11 +18,15 @@
             :key="`${node}_${i}`"
             :to="`/hashtag/${node.slice(1)}`"
             style="color: deepskyblue;"
-          >{{ node }}</nuxt-link>
+            >{{ node }}</nuxt-link
+          >
           <template v-else>{{ node }}</template>
         </template>
       </div>
     </v-card-text>
+    <div style="padding: 0 10px; text-align: right; font-size: 12px;">
+      {{ $moment(post.createdAt).fromNow() }}
+    </div>
   </div>
 </template>
 
@@ -77,6 +83,5 @@ export default {
 a {
   text-decoration: none;
   color: inherit;
-}
-</style
+}</style
 >>

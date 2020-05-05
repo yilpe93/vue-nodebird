@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "lintfix": "eslint --fix --ext .js,.vue --ignore-path .gitignore ."
   },
@@ -13,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "@nuxtjs/axios": "^5.9.7",
+    "@nuxtjs/moment": "^1.6.0",
     "@nuxtjs/vuetify": "^1.11.0",
     "axios": "^0.19.2",
     "lodash.throttle": "^4.1.1",
