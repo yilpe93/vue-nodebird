@@ -77,7 +77,10 @@ module.exports = {
   },
   vuetify: {},
   axios: {
-    browserBaeURL: "http://localhost:3085", // client axios
+    browserBaeURL:
+      process.env.NODE_ENV === "production"
+        ? "https://api.vue-twitter.com"
+        : "http://localhost:3085", // client axios
     baseURL: "http://localhost:3085", // server axios
     https: false,
   },
