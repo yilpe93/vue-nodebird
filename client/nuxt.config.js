@@ -9,7 +9,7 @@ module.exports = {
       {
         name: "viewport",
         content:
-          "width=device-width, initial-scale=1.0, user-scalable=yes, viewport-if--fit=cover",
+          "width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover",
       },
       // 검색엔진, robot.txt
       {
