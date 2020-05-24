@@ -1,11 +1,13 @@
 # Vue-Twitter
 
-<!-- [Clone](https://www.inflearn.com/course/Vue-nodebird-sns/dashboard) -->
+Clone Twitter with Nuxt.js
+
+<!-- [Clone Project](https://www.inflearn.com/course/Vue-nodebird-sns/dashboard) -->
 
 ## Client
 
-- Vue.js
-- Nuxt.js
+- Vue
+- Nuxt
 - Vuex
 - Vuetify
 - Infinite Scroll
@@ -14,11 +16,12 @@
 
 ## Server
 
-- Node.js
+- Node
 - Express
-- MySQL (ver 8.x)
-- ORM(시퀄라이즈)
 - Passport
+- Authenticate
+- MySQL (ver 8.x)
+- ORM(Sequelize)
 - multer(S3)
 
 <!--
